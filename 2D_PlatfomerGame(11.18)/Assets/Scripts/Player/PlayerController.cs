@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float walkSpeed = 5;
     [SerializeField] private float runSpeed = 8;
+    [SerializeField] private float airWalkSpeed = 5;
+    [SerializeField] private float airRunSpeed = 8;
     [SerializeField] private float jumpImpulse = 10;
     Rigidbody2D rb;
     
@@ -18,15 +20,29 @@ public class PlayerController : MonoBehaviour
         {
             if (CanMove)
             {
-                if (IsMoving)
+                if (IsMoving && !touchingDirections.IsOnWall)
                 {
-                    if (IsRunning)
+                    if (touchingDirections.IsGrounded)
                     {
-                        return runSpeed;
+                        if (IsRunning)
+                        {
+                            return runSpeed;
+                        }
+                        else
+                        {
+                            return walkSpeed;
+                        }
                     }
                     else
                     {
-                        return walkSpeed;
+                        if (IsRunning)
+                        {
+                            return airRunSpeed;
+                        }
+                        else
+                        {
+                            return airWalkSpeed;
+                        }
                     }
                 }
                 else
