@@ -14,7 +14,9 @@ public enum WalkableDirection
 [RequireComponent(typeof(TouchingDirections))]
 public class Knight : MonoBehaviour
 {
-    public float walkSpeed = 3.0f;
+	public float maxSpeed = 3.0f;
+	public float walkAcceleration = 3.0f;
+	public float walkStopRate = 0.6f;
     [SerializeField] private bool _hasTarget = false;
     [SerializeField] private DetectionZone attackZone;
 
@@ -105,16 +107,21 @@ public class Knight : MonoBehaviour
 
         if (!damageable.LockVelocity)
         {
-            if (CanMove)
+            if (CanMove && touchingDirections.IsGrounded)
             {
-                rb.velocity = new Vector2(walkSpeed * walkDirectionVector.x, rb.velocity.y);
-            }
+				rb.velocity = new Vector2
+				{
+					x = Mathf.Clamp(rb.velocity.x + (walkAcceleration * walkDirectionVector.x * Time.fixedDeltaTime),
+					-maxSpeed, maxSpeed),
+					y = rb.velocity.y
+				};
+			}
             else
             {
-                rb.velocity = new Vector2(0 * walkDirectionVector.x, rb.velocity.y);
-            }
-        }
-    }
+                rb.velocity = new Vector2(Mathf.Clamp(rb.velocity.x,0, walkStopRate), rb.velocity.y);
+			}
+		}
+	}
 
     private void FlipDirection()
     {

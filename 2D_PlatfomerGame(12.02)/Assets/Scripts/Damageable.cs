@@ -8,6 +8,8 @@ public class Damageable : MonoBehaviour
 {
     public UnityEvent<Vector2> damageableHit;
 
+	public UnityEvent<int, int> healthChanged;
+
     public bool LockVelocity
     {
         get { return animator.GetBool(AnimationStrings.LockVelocity); }
@@ -34,7 +36,8 @@ public class Damageable : MonoBehaviour
         set 
         { 
             _health = value;
-            if (_health <= 0) 
+			healthChanged?.Invoke(_health, MaxHealth);
+			if (_health <= 0) 
             {
                 IsAlive = false;
             }
@@ -61,7 +64,7 @@ public class Damageable : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void GetHit(int attackDamage)
+    public bool GetHit(int attackDamage)
     {
         if (IsAlive)
         {
@@ -70,14 +73,15 @@ public class Damageable : MonoBehaviour
             animator.SetTrigger("Hit");
 			CharacterEvents.characterDamaged?.Invoke(this.gameObject, attackDamage);
 			Debug.Log(Health);
+			return true;
         }
         else
         {
-            Debug.Log("Is Death");
+			return false;
         }
     }
 
-    public void GetHit(int attackDamage,Vector2 knockback)
+    public bool GetHit(int attackDamage,Vector2 knockback)
     {
         if (IsAlive)
         {
@@ -88,7 +92,9 @@ public class Damageable : MonoBehaviour
             LockVelocity = true;
 			CharacterEvents.characterDamaged?.Invoke(this.gameObject, attackDamage);
 			damageableHit?.Invoke(knockback);
-        }
+			return true;
+		}
+		return false;
     }
 
     public bool Heal(int healthRestore)

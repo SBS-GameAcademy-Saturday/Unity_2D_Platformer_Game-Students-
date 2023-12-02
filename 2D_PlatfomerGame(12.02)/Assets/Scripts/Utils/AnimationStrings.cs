@@ -16,4 +16,6 @@ public class AnimationStrings
     public static string IsOnWall = "IsOnWall";
     public static string IsOnCeiling = "IsOnCeiling";
     public static string Jump = "Jump";
+	public static string Attack = "Attack";
+	public static string RangedAttack = "RangedAttack";
 }
